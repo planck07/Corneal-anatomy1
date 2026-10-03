@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cornea quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f8f9;--card:#fff;--ink:#10343d;--mute:#56747b;--line:#cfe0e3;--teal:#1b7f8c;--tealbg:#d9eef0;--bad:#a8402f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f2429;--card:#16333a;--ink:#e4f1f3;--mute:#9bb8be;--line:#2a4a52;--teal:#5cc3cf;--tealbg:#1f4a52;--bad:#f0a090}}
+:root[data-theme="dark"]{--bg:#0f2429;--card:#16333a;--ink:#e4f1f3;--mute:#9bb8be;--line:#2a4a52;--teal:#5cc3cf;--tealbg:#1f4a52;--bad:#f0a090}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 "Source Sans 3",system-ui,sans-serif}
+main{max-width:560px;margin:0 auto;padding:28px 18px 48px}
+h1{font:500 30px/1.15 Fraunces,Georgia,serif;margin:0 0 10px}
+p{margin:0 0 14px}
+.mute{color:var(--mute);font-size:15px}
+.strip{display:flex;flex-direction:column;gap:3px;margin:20px 0}
+.band{display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:var(--teal);color:#fff;border-radius:3px;font-size:14px;font-weight:600}
+button{font:600 17px "Source Sans 3",system-ui,sans-serif;min-height:48px;padding:0 20px;border-radius:8px;border:1.5px solid var(--teal);background:var(--teal);color:#fff;cursor:pointer;width:100%}
+button.opt{background:var(--card);color:var(--ink);border:1.5px solid var(--line);text-align:left;margin:0 0 10px;padding:12px 16px;font-weight:400;height:auto;user-select:none}
+button.opt.sel{border-color:var(--teal);background:var(--tealbg)}
+button.alt{background:var(--card);color:var(--teal)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+input{width:100%;min-height:48px;padding:0 14px;font:400 17px "Source Sans 3",system-ui,sans-serif;border:1.5px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);margin:0 0 14px}
+.count{font:500 40px/1 Fraunces,Georgia,serif;margin:6px 0 18px;font-variant-numeric:tabular-nums}
+.err{color:var(--bad);font-size:15px;min-height:22px;margin:4px 0 10px}
+.top{display:flex;justify-content:space-between;font-size:15px;color:var(--mute)}
+.bar{height:5px;background:var(--line);border-radius:3px;margin:8px 0 22px}
+.bar i{display:block;height:5px;background:var(--teal);border-radius:3px}
+.q{font:500 22px/1.3 Fraunces,Georgia,serif;margin:0 0 18px;user-select:none}
+.code{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:16px;word-break:break-word;margin:0 0 14px}
+
+
+.row{display:flex;gap:10px;margin:0 0 12px}.row button{flex:1}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 16px}
+button.qn{padding:0;min-height:46px;background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+button.qn.done{background:var(--teal);color:#fff;border-color:var(--teal)}
+button.qn.cur{box-shadow:0 0 0 3px var(--ink)}
+a.btn{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:8px;background:var(--teal);color:#fff;text-decoration:none;font-weight:600;margin-top:4px}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .25s}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+var END=new Date("2026-10-05T00:00:00Z"),LIMIT=3000,SK="cornea40";
+var KEY="bdegggibcf"+"ffggbceegi"+"iacdfhggad"+"cffhhaccef"+"hhabeeeiib";
+var Q=[
+["The average horizontal visible iris diameter (HVID) is:",["10.6 mm","11.7 mm","12.5 mm","7.8 mm"]],
+["Average corneal thickness at the centre and at the limbus:",["0.67 / 0.52 mm","0.52 / 0.52 mm","0.52 / 0.67 mm","0.50 / 0.90 mm"]],
+["Towards the periphery, corneal curvature:",["Steepens","Stays constant","Flattens","Becomes spherical"]],
+["The actual refractive index of the cornea is:",["1.336","1.354","1.47","1.376"]],
+["The cornea provides about what share of the eye's refractive power?",["One-third","Half","Two-thirds","90%"]],
+["What percentage of corneal wet weight is water?",["15%","78%","5%","1%"]],
+["What percentage of corneal wet weight is collagen?",["1%","5%","15%","78%"]],
+["The cornea is best described as:",["A solid of rotation about the optic axis","A meniscus lens that is not a solid of rotation","A flat disc","A perfect sphere"]],
+["Corneal area is what fraction of the globe's total area?",["1/4","1/14","1/40","1/2"]],
+["Sagittal depth of the cornea is about:",["1.3 mm","5.2 mm","0.52 mm","2.6 mm"]],
+["How many layers does the cornea have?",["3","4","5","7"]],
+["Which is the correct order from outside to inside?",["Epithelium, stroma, Bowman's layer, Descemet's, endothelium","Epithelium, Bowman's layer, stroma, Descemet's, endothelium","Endothelium, Descemet's, stroma, Bowman's, epithelium","Epithelium, Bowman's layer, Descemet's, stroma, endothelium"]],
+["How thick is the corneal epithelium?",["5 µm","50 µm","0.5 mm","150 µm"]],
+["Which cell types make up the epithelium?",["Squamous, wing, basal","Keratocytes, wing, basal","Squamous, goblet, basal","Squamous, wing, endothelial"]],
+["Basal cells take about how long to reach the surface?",["1 day","7 days","6 weeks","12 months"]],
+["The epithelium makes up about what share of corneal wet weight?",["1%","10%","50%","90%"]],
+["Which layer gives the tear film a smooth substrate?",["Stroma","Endothelium","Epithelium","Descemet's membrane"]],
+["Microplicae and microvilli on surface cells are thought to:",["Pump ions","Anchor the mucus layer","Secrete lipid","Absorb UV"]],
+["The epithelial basement membrane lies between the basal cells and:",["Descemet's membrane","The stroma's centre","Bowman's layer","The tear film"]],
+["Epithelial anchoring fibrils contain which collagen?",["Type I","Type IV","Type III","Type VII"]],
+["Hemidesmosomes anchor basal cells to the:",["Tear film","Descemet's membrane","Basement membrane","Endothelium"]],
+["Bowman's layer is:",["Acellular, modified anterior stroma","Full of keratocytes","Secreted by the endothelium","Made of epithelial cells"]],
+["Bowman's layer thickness is about:",["1–2 µm","8–14 µm","50 µm","0.5 mm"]],
+["Compared with stromal fibrils, Bowman's fibrils are:",["Thicker","Thinner","The same size","Absent"]],
+["What share of corneal thickness is stroma?",["50%","70%","90%","10%"]],
+["How many lamellae are in the stroma?",["20–25","50–100","500,000","200–250"]],
+["Stromal keratocytes are also called:",["Wing cells","Corneal fibroblasts","Goblet cells","Melanocytes"]],
+["What do the ground substance GAGs do?",["Set fibril spacing and draw in water","Secrete Descemet's membrane","Pump ions","Store glycogen"]],
+["Stromal transparency depends on:",["Ordered, regularly spaced collagen fibrils","Large fibril diameter","Many blood vessels","Thick keratocytes"]],
+["Descemet's membrane is secreted by the:",["Epithelium","Keratocytes","Endothelium","Bowman's layer"]],
+["Descemet's membrane thickness is about:",["10–12 µm","1 µm","50 µm","0.5 mm"]],
+["Hassall-Henle warts are:",["Bowman's layer thickenings","Epithelial cysts","Periodic thickenings of Descemet's membrane","Stromal scars"]],
+["The endothelium is:",["Multilayered and replicating","A single layer of non-replicating cells","Absent in adults","Cellular only at the limbus"]],
+["About how many cells make up the endothelium?",["5,000","50,000","500,000","5 million"]],
+["Endothelial cell diameter is about:",["5 µm","18–20 µm","45 µm","50 µm"]],
+["With age, endothelial cells vary more in size. This is called:",["Polymegethism","Pleomorphism only","Keratoconus","Arcus"]],
+["Removing the endothelium causes:",["Thinning","Rapid swelling","No change","Epithelial thickening only"]],
+["Losing the epithelial barrier causes:",["Rapid corneal swelling","Corneal thinning","No change","Stromal vascularisation"]],
+["The endothelial pump is driven mainly by:",["Ca2+ channels","Na+ + K+ ATPase","Chloride only","Passive diffusion"]],
+["Endothelial cells are rich in:",["Lipid droplets","Mitochondria","Melanin","Keratin"]],
+["Corneal sensory nerves come from the:",["Facial nerve (N7)","Optic nerve","Ophthalmic division of the trigeminal nerve (N5)","Oculomotor nerve (N3)"]],
+["Most of the cornea is:",["Richly vascularised","Avascular","Supplied by Schlemm's canal","Supplied by retinal vessels"]],
+["Corneal nerves lose their myelin sheath:",["Before their first division","At the endothelium","Never","In the epithelium"]],
+["Keratocytes make up about what share of the stroma?",["2–3%","15%","10%","50%"]],
+["The refractive index of stromal collagen is about:",["1.354","1.336","1.47","1.376"]],
+["Descemet's membrane is:",["Cellular and rigid","Structureless and slightly elastic","Made of keratocytes","Vascular"]],
+["Stromal lamellae run:",["Parallel to the corneal surface and to each other","Perpendicular to the surface","Randomly","In a spiral around the endothelium"]],
+["Which layer is the main active control of corneal thickness?",["Epithelium","Bowman's layer","Stroma","Endothelium"]],
+["Complete epithelial regeneration after total stripping takes about:",["24 hours","1 week","6 weeks","12 months"]],
+["The posterior corneal surface has a power of about:",["+6.15 D","-6.15 D","+43.27 D","-43.27 D"]]
+];
+var app=document.getElementById("app"),order,i,sel,score,sw,end,tmr,active=false,t0,picks=[];
+var WKEY="f9393b69-9fd1-45c3-bbf0-1e9ffa293d7b";
+var CH=1268029890;
+function hs(t){var x=5381;for(var k=0;k<t.length;k++){x=((x<<5)+x+t.charCodeAt(k))>>>0;}return x;}
+function ans(n){return KEY.charCodeAt(n)-97-(n%7);}
+function shuffle(a){for(var x=a.length-1;x>0;x--){var j=Math.floor(Math.random()*(x+1)),t=a[x];a[x]=a[j];a[j]=t;}return a;}
+function sget(){try{return JSON.parse(localStorage.getItem(SK));}catch(e){return null;}}
+function sset(v){try{localStorage.setItem(SK,JSON.stringify(v));}catch(e){}}
+function p2(n){return String(n).padStart(2,"0");}
+function fmt(ms){var s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return (d?d+"d ":"")+p2(h)+":"+p2(m)+":"+p2(s%60);}
+function mmss(ms){var s=Math.max(0,Math.floor(ms/1000));return p2(Math.floor(s/60))+":"+p2(s%60);}
+function strip(){return '<div class="strip" aria-hidden="true"><div class="band" style="height:22px"><span>Epithelium</span></div><div class="band" style="height:14px;opacity:.8"><span>Bowman\'s layer</span></div><div class="band" style="height:84px;opacity:.55"><span>Stroma</span></div><div class="band" style="height:16px;opacity:.8"><span>Descemet\'s membrane</span></div><div class="band" style="height:22px"><span>Endothelium</span></div></div>';}
+function showCode(code,head){
+ app.innerHTML='<h1>'+head+'</h1><p class="mute" id="st"></p><p>Your result code:</p><div class="code" id="cc">'+code+'</div><button id="cp" class="alt">Copy result code</button><div class="err" id="err"></div><a class="btn" href="quit.html">Exit exam</a>';
+ document.getElementById("cp").onclick=function(){try{navigator.clipboard.writeText(code).then(function(){document.getElementById("err").textContent="Copied.";},function(){document.getElementById("err").textContent="Select the code above and copy it.";});}catch(e){document.getElementById("err").textContent="Select the code above and copy it.";}};
+}
+function gate(){
+ var s=sget();
+ if(s&&s.code){showCode(s.code,"Quiz submitted");return;}
+ if(s&&s.started){app.innerHTML='<h1>Quiz already started</h1><p>This quiz was started on this device and can\'t be restarted. Contact your instructor.</p><p class="mute">Started by '+s.name+'.</p>';return;}
+ if(Date.now()>=END){app.innerHTML='<h1>Quiz closed</h1><p>This quiz is no longer open.</p>';return;}
+ app.innerHTML='<h1>Cornea quiz</h1><p>'+Q.length+' multiple-choice questions, '+(LIMIT/60)+' minutes. One attempt. You can go back and change answers before you submit.</p>'+strip()+'<label for="nm" class="mute">Your full name</label><input id="nm" autocomplete="name" placeholder="Ama Mensah"><label for="pw" class="mute">Access code from your instructor</label><input id="pw" type="password" autocomplete="off"><div class="err" id="err" role="alert"></div><button id="go">Start quiz</button>';
+ var err=document.getElementById("err");
+ document.getElementById("go").onclick=function(){
+  var name=document.getElementById("nm").value.trim();
+  if(!name){err.textContent="Enter your name first.";return;}
+  if(hs(document.getElementById("pw").value.trim().toLowerCase())!==CH){err.textContent="That access code isn't right. Check it and try again.";return;}
+  if(Date.now()>=END){gate();return;}
+  begin(name);
+ };
+}
+function begin(name){
+ var idx=[];for(var k=0;k<Q.length;k++){idx.push(k);}
+ order=shuffle(idx).map(function(n){var o=Q[n][1].map(function(t,j){return {t:t,o:j};});return {n:n,q:Q[n][0],opts:shuffle(o)};});
+ picks=[];for(var z=0;z<Q.length;z++){picks.push(-1);}i=0;sw=0;active=true;t0=Date.now();end=Math.min(t0+LIMIT*1000,END.getTime());
+ sset({started:Date.now(),name:name});window._name=name;
+ tmr=setInterval(function(){var el=document.getElementById("tm");var l=end-Date.now();if(el){el.textContent=mmss(l);}if(l<=0){finish();}},1000);
+ ask();
+}
+function head(){
+ var done=0;for(var k=0;k<picks.length;k++){if(picks[k]>=0){done++;}}
+ return {done:done,html:'<div class="top"><span>'+done+' of '+Q.length+' answered</span><span>Time left <b id="tm">'+mmss(end-Date.now())+'</b></span></div><div class="bar"><i style="width:'+Math.round(done/Q.length*100)+'%"></i></div>'};
+}
+function ask(){
+ var d=order[i],h=head().html;
+ h+='<p class="mute">Question '+(i+1)+' of '+Q.length+'</p><p class="q">'+d.q+'</p>';
+ for(var k=0;k<d.opts.length;k++){h+='<button class="opt'+(picks[i]===k?' sel':'')+'" data-k="'+k+'">'+d.opts[k].t+'</button>';}
+ h+='<div class="row">'+(i>0?'<button id="bk" class="alt">Back</button>':'')+(i<Q.length-1?'<button id="nx">Next</button>':'<button id="nx">Review</button>')+'</div><button id="all" class="alt">All questions</button><p class="mute" style="margin-top:14px">Leaving this tab is recorded.</p>';
+ app.innerHTML=h;
+ var o=app.querySelectorAll(".opt");
+ for(var n=0;n<o.length;n++){o[n].onclick=function(){picks[i]=+this.getAttribute("data-k");ask();};}
+ var bk=document.getElementById("bk");if(bk){bk.onclick=function(){i--;ask();};}
+ document.getElementById("nx").onclick=function(){if(i<Q.length-1){i++;ask();}else{overview();}};
+ document.getElementById("all").onclick=overview;
+}
+function overview(){
+ var hd=head(),left=Q.length-hd.done,conf=false;
+ var h=hd.html+'<h1 style="font-size:24px">All questions</h1><p class="mute">Filled numbers are answered. Outlined numbers are not answered yet. Tap a number to open that question.</p><div class="grid">';
+ for(var k=0;k<Q.length;k++){h+='<button class="qn'+(picks[k]>=0?' done':'')+(k===i?' cur':'')+'" data-q="'+k+'" aria-label="Question '+(k+1)+(picks[k]>=0?', answered':', not answered')+'">'+(k+1)+'</button>';}
+ h+='</div><div class="err" id="err" role="alert"></div><div class="row"><button id="rt" class="alt">Back to question</button><button id="sub">Submit quiz</button></div>';
+ app.innerHTML=h;
+ var g=app.querySelectorAll(".qn");
+ for(var n=0;n<g.length;n++){g[n].onclick=function(){i=+this.getAttribute("data-q");ask();};}
+ document.getElementById("rt").onclick=ask;
+ document.getElementById("sub").onclick=function(){
+  if(left>0&&!conf){conf=true;document.getElementById("err").textContent=left+" question"+(left>1?"s are":" is")+" not answered. Tap Submit quiz again to submit anyway.";return;}
+  finish();
+ };
+}
+function finish(){
+ if(!active){return;}
+ active=false;clearInterval(tmr);
+ var score=0;for(var k=0;k<order.length;k++){var q=order[k];if(picks[k]>=0&&q.opts[picks[k]].o===ans(q.n)){score++;}}
+ var used=mmss(Math.min(Date.now(),end)-t0);
+ var code=window._name+" | "+score+"/"+Q.length+" | tab leaves: "+sw+" | time used: "+used;
+ var s=sget()||{};s.code=code;sset(s);
+ showCode(code,"You scored "+score+" / "+Q.length);
+ var answered=0;for(var z=0;z<picks.length;z++){if(picks[z]>=0){answered++;}}
+ var st=document.getElementById("st"),fail="Couldn't send automatically. Send the code below to your instructor.";
+ if(WKEY.indexOf("PASTE")===0){st.textContent="Send the code below to your instructor.";return;}
+ st.textContent="Sending your result…";
+ try{fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({access_key:WKEY,subject:"Cornea quiz result: "+window._name,name:window._name,score:score+" / "+Q.length,answered:answered,tab_leaves:sw,time_used:used})}).then(function(r){return r.json();}).then(function(d){st.textContent=d&&d.success?"Your result was sent to your instructor.":fail;}).catch(function(){st.textContent=fail;});}catch(e){st.textContent=fail;}
+}
+document.addEventListener("visibilitychange",function(){if(active&&document.hidden){sw++;}});
+document.addEventListener("contextmenu",function(e){if(active){e.preventDefault();}});
+document.addEventListener("copy",function(e){if(active){e.preventDefault();}});
+gate();
+</script>
+</body>
+</html>
